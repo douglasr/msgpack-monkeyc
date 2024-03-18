@@ -1,0 +1,7 @@
+#------------------------------------------------------------------------
+#  MessagePack for Monkey C
+#  (c)2024 Douglas Robertson (douglas@edgeoftheearth.com)
+#------------------------------------------------------------------------
+
+project.manifest = manifest.xml
+project.typecheck = 3
