@@ -1,0 +1,3 @@
+<strings>
+  <string id="exceptionElementTooLarge">arrays/maps larger than 65535 elements are not supported</string>
+</strings>

@@ -24,6 +24,7 @@ SOFTWARE.
 Author: Douglas Robertson (GitHub: douglasr; Garmin Connect: dbrobert)
 */
 
+import Toybox.Application;
 import Toybox.Lang;
 
 /*
@@ -70,6 +71,19 @@ module MessagePack {
 
     typedef MsgPackObject as Array or Boolean or ByteArray or Decimal or Dictionary or Number or Long or String;
 
+    class MalformedFormatException extends Lang.Exception {
+        var _message as String?;
+
+        function initialize(message as String?) {
+            Exception.initialize();
+            _message = message;
+        }
+
+        function getErrorMessage() as Lang.String? {
+            return (_message);
+        }
+    }
+
     (:messagePackSerialize)
     module Serialize  {
 
@@ -110,7 +124,7 @@ module MessagePack {
                 byteArray[1] = (array.size() >> 8) & 0xFF;
                 byteArray[2] = array.size() & 0xFF;
             } else {
-                // FIXME: need to handle this (raise an error?)
+                throw new MalformedFormatException(Application.loadResource(Rez.Strings.exceptionElementTooLarge) as String);
             }
 
             for (var i=0; i < array.size(); i++) {
@@ -196,6 +210,8 @@ module MessagePack {
                 byteArray[0] = FORMAT_MAP16;
                 byteArray[1] = (keys.size() >> 8)  & 0xFF;
                 byteArray[2] = keys.size() & 0xFF;
+            } else {
+                throw new MalformedFormatException(Application.loadResource(Rez.Strings.exceptionElementTooLarge) as String);
             }
 
             for (var i=0; i < keys.size(); i++) {
