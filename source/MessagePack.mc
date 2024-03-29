@@ -36,6 +36,7 @@ module MessagePack {
     const FORMAT_FIXARRAY   = 0x90;
     const FORMAT_FIXSTR     = 0xA0;
     const FORMAT_NIL        = 0xC0;
+    const FORMAT_UNUSED     = 0xC1;
     const FORMAT_FALSE      = 0xC2;
     const FORMAT_TRUE       = 0xC3;
     const FORMAT_BIN8       = 0xC4;

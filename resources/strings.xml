@@ -1,3 +1,6 @@
 <strings>
   <string id="exceptionElementTooLarge">arrays/maps larger than 65535 elements are not supported</string>
+  <string id="exceptionExtraBytes">$1$ extra bytes after the deserialized object</string>
+  <string id="exceptionInvalidByte">invalid byte</string>
+  <string id="exceptionUnsupportedFormatByte">specified format is not supported</string>
 </strings>

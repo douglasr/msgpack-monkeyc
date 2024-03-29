@@ -35,7 +35,6 @@ MessagePack.Deserialize.unpack(obj);
     - support for arrays bigger than 65535 elements
     - support maps (Dictionary) with more than 65535 keys
     - support for symbols (since values for symbols may change across builds)
-- does not currently unpack (deserialize) anything
 
 ## Contributing
 Please see the CONTRIBUTING.md file for details on how contribute.
