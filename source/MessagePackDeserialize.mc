@@ -56,7 +56,7 @@ module MessagePack {
         //   @param  byteArray byte array of the object, in MessagePack format
         //   @param  index     the index within the byte array to start deserialization at
         //   @return an array/tuple of a MessagePack object and the end index (after parsing)
-        function unpackRecursive(byteArray as ByteArray, index as Number) as Array<MsgPackObject or Number> {
+        function unpackRecursive(byteArray as ByteArray, index as Number) as [MsgPackObject, Number] {
             var parseResults;
             var formatByte;
             formatByte = byteArray[index];
@@ -77,14 +77,14 @@ module MessagePack {
             } else {
                 throw new MalformedFormatException(Application.loadResource(Rez.Strings.exceptionInvalidByte) as String);
             }
-            return parseResults as Array<MsgPackObject or Number>;
+            return parseResults as [MsgPackObject, Number];
         }
 
         // Deserialize (unpack) an array.
         //   @param  byteArray byte array of MessagePack object(s)
         //   @param  index     index within the byte array to start parsing
         //   @return an array/tuple of an array of MessagePack objects and the end index (after parsing)
-        function unpackArray(byteArray as ByteArray, index as Number) as Array<Array or Number> {
+        function unpackArray(byteArray as ByteArray, index as Number) as [Array, Number] {
             var arraySize;
             var headerSize;
             var unpackedArray = [];
@@ -106,18 +106,18 @@ module MessagePack {
                 index = parseResults[1];
             }
 
-            return [unpackedArray, index] as Array<Array or Number>;
+            return [unpackedArray, index];
         }
 
         // Deserialize (unpack) a boolean.
         //   @param  byteArray byte array of MessagePack object(s)
         //   @param  index     index within the byte array to start parsing
         //   @return an array/tuple of a boolean object and the end index (after parsing)
-        function unpackBoolean(byteArray as ByteArray, index as Number) as Array<Boolean or Number> {
+        function unpackBoolean(byteArray as ByteArray, index as Number) as [Boolean, Number] {
             if (byteArray[index] == FORMAT_TRUE) {
-                return [true, index+1] as Array<Boolean or Number>;
+                return [true, index+1];
             } else if (byteArray[index] == FORMAT_FALSE) {
-                return [false, index+1] as Array<Boolean or Number>;
+                return [false, index+1];
             }
             throw new MalformedFormatException(Application.loadResource(Rez.Strings.exceptionInvalidByte) as String);
         }
@@ -126,7 +126,7 @@ module MessagePack {
         //   @param  byteArray byte array of MessagePack object(s)
         //   @param  index     index within the byte array to start parsing
         //   @return an array/tuple of an dictionary of MessagePack object key/pairs and the end index (after parsing)
-        function unpackDictionary(byteArray as ByteArray, index as Number) as Array<Dictionary or Number> {
+        function unpackDictionary(byteArray as ByteArray, index as Number) as [Dictionary, Number] {
             var mapSize;
             var headerSize;
             var unpackedMap = {};
@@ -157,16 +157,16 @@ module MessagePack {
                 unpackedMap[key] = value;
             }
 
-            return [unpackedMap, index] as Array<Dictionary or Number>;
+            return [unpackedMap, index];
         }
 
         // Deserialize (unpack) a null.
         //   @param  byteArray byte array of MessagePack object(s)
         //   @param  index     index within the byte array to start parsing
         //   @return an array/tuple of a null object and the end index (after parsing)
-        function unpackNull(byteArray as ByteArray, index as Number) as Array<Null or ByteArray or Number> {
+        function unpackNull(byteArray as ByteArray, index as Number) as [Null, Number] {
             if (byteArray[index] == FORMAT_NIL) {
-                return [null, index+1] as Array<Null or ByteArray or Number>;
+                return [null, index+1];
             }
             throw new MalformedFormatException(Application.loadResource(Rez.Strings.exceptionInvalidByte) as String);
         }
@@ -175,20 +175,20 @@ module MessagePack {
         //   @param  byteArray byte array of MessagePack object(s)
         //   @param  index     index within the byte array to start parsing
         //   @return an array/tuple of a number/long and the end index (after parsing)
-        function unpackNumber(byteArray as ByteArray, index as Number) as Array<Number or Long or Number> {
+        function unpackNumber(byteArray as ByteArray, index as Number) as [Number or Long, Number] {
             if (byteArray[index] >= 0x00 && byteArray[index] < 0x80) {
                 // value is the actual byte
-                return [byteArray[index], index+1] as Array<Number or Long or Number>;
+                return [byteArray[index], index+1];
             } else if (byteArray[index] >= 0xE0 && byteArray[index] <= 0xFF) {
                 // value is 0x1FF-byte-1
-                return [(byteArray[index]-FORMAT_NEG_FIXINT-1), index+1] as Array<Number or Long or Number>;
+                return [(byteArray[index]-FORMAT_NEG_FIXINT-1), index+1];
             } else if (byteArray[index] == FORMAT_UINT8) {
                 // value is the byte after the format
-                return [byteArray[index+1], index+2] as Array<Number or Long or Number>;
+                return [byteArray[index+1], index+2];
             } else if (byteArray[index] == FORMAT_UINT16) {
                 // value is the two bytes after the format
                 var uint16 = (byteArray[index+1] << 8) + byteArray[index+2];
-                return [uint16, index+4] as Array<Number or Long or Number>;
+                return [uint16, index+4];
             } else if (byteArray[index] == FORMAT_UINT32) {
                 // value is the four bytes after the format
                 var uint32 = 0;
@@ -199,26 +199,26 @@ module MessagePack {
                     uint32 = (byteArray[index+1] << 24);
                 }
                 uint32 = uint32 + (byteArray[index+2] << 16) + (byteArray[index+3] << 8) + byteArray[index+4];
-                return [uint32, index+6] as Array<Number or Long or Number>;
+                return [uint32, index+6];
             } else if (byteArray[index] == FORMAT_UINT64) {
                 var uint64 = (byteArray[index+1].toLong() << 56) + (byteArray[index+2].toLong() << 48);
                 uint64 = uint64 + (byteArray[index+3].toLong() << 40) + (byteArray[index+4].toLong() << 32);
                 uint64 = uint64 + (byteArray[index+5].toLong() << 24) + (byteArray[index+6] << 16);
                 uint64 = uint64 + (byteArray[index+7] << 8) + byteArray[index+8];
-                return [uint64, index+10] as Array<Long or Number>;
+                return [uint64, index+10];
             } else if (byteArray[index] == FORMAT_INT8) {
                 // value is byte - 256
-                return [(byteArray[index+1]-256), index+2] as Array<Number or Long or Number>;
+                return [(byteArray[index+1]-256), index+2];
             } else if (byteArray[index] == FORMAT_INT16) {
                 // value is byte - 65536
                 var int16 = (byteArray[index+1] << 8) + byteArray[index+2] - 65536;
-                return [int16, index+3] as Array<Number or Long or Number>;
+                return [int16, index+3];
             } else if (byteArray[index] == FORMAT_INT32) {
                 // value is byte - 4294967296
                 var int32 = (byteArray[index+1].toLong() << 24);
                 int32 = int32 + (byteArray[index+2] << 16) + (byteArray[index+3] << 8) + byteArray[index+4];
                 int32 = (int32 - 4294967296l).toNumber();
-                return [int32, index+6] as Array<Number or Long or Number>;
+                return [int32, index+6];
             } else {
                 // value is byte - 9223372036854775807 - 9223372036854775807 - 2
                 var int64 = (byteArray[index+1].toLong() << 56) + (byteArray[index+2].toLong() << 48);
@@ -228,7 +228,7 @@ module MessagePack {
                 int64 = int64 - 9223372036854775807l;
                 int64 = int64 - 9223372036854775807l;
                 int64 = int64 - 2;
-                return [int64, index+10] as Array<Long or Number>;
+                return [int64, index+10];
             }
         }
 
@@ -236,7 +236,7 @@ module MessagePack {
         //   @param  byteArray byte array of MessagePack object(s)
         //   @param  index     index within the byte array to start parsing
         //   @return an array/tuple of a string object and the end index (after parsing)
-        function unpackString(byteArray as ByteArray, index as Number) as Array<String or Number> {
+        function unpackString(byteArray as ByteArray, index as Number) as [String, Number] {
             var strLength;
             var headerSize;
             var unpackedStr = "";
@@ -263,7 +263,7 @@ module MessagePack {
             catch (ex) {
             }
 
-            return [unpackedStr, index+headerSize+strLength] as Array<String or Number>;
+            return [unpackedStr, index+headerSize+strLength];
         }
     }
 }
