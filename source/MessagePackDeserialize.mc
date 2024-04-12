@@ -35,7 +35,7 @@ And now it's available for Monkey C.
 */
 module MessagePack {
 
-    (:messagePackDeserialize)
+    (:MessagePackDeserialize)
     module Deserialize {
 
         // Deserialize (unpack) a packable object, recursively as needed.

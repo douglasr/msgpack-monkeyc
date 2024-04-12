@@ -33,7 +33,7 @@ And now it's available for Monkey C.
 */
 module MessagePack {
 
-    (:messagePackSerialize)
+    (:MessagePackSerialize)
     module Serialize  {
 
         // Serialize (pack) a packable object, recursively as needed.

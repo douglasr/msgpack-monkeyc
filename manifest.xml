@@ -143,6 +143,9 @@
             Use "Monkey C: Edit Annotations" from the Visual Studio Code
             command palette to edit the annotations.
         -->
-        <iq:annotations/>
+        <iq:annotations>
+            <iq:annotation>MessagePackSerialize</iq:annotation>
+            <iq:annotation>MessagePackDeserialize</iq:annotation>
+        </iq:annotations>
     </iq:barrel>
 </iq:manifest>
