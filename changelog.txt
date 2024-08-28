@@ -2,6 +2,10 @@ MessagePack for Monkey C
 ------------------------
 (c)2024 Douglas Robertson (douglas@edgeoftheearth.com)
 
+0.3.0  --  28-Aug-2024
+  - updated source code to System 7 (CIQ 5.0.x)
+  - added new devices to manifest
+
 0.2.0  --  29-Mar-2024
   - changed minimum API level requirement from CIQ 3.0 to CIQ 3.1
   - added support for unpacking

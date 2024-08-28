@@ -41,3 +41,6 @@ Please see the CONTRIBUTING.md file for details on how contribute.
 
 ### Contributors
 * [Douglas Robertson](https://github.com/douglasr)
+
+## Changelog
+See the summaried list of changes in the changelog.txt file. The complete list of changes can be viewed via the repo commit log.
