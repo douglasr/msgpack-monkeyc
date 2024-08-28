@@ -44,15 +44,15 @@ module MessagePack {
 
             (:test)
             function testFixArray(logger as Logger) as Boolean {
-                Test.assertEqual(packArray([] as Array<Number>), [0x90]b);
-                Test.assertEqual(packArray([1] as Array<Number>), [0x91, 0x01]b);
-                Test.assertEqual(packArray([0,1,2,3,4,5] as Array<Number>), [0x96, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05]b);
+                Test.assertEqual(packArray([]), [0x90]b);
+                Test.assertEqual(packArray([1]), [0x91, 0x01]b);
+                Test.assertEqual(packArray([0,1,2,3,4,5]), [0x96, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05]b);
                 Test.assertEqual(
-                    packArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] as Array<Number>),
+                    packArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]),
                     [0x9F, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E]b
                 );
                 Test.assertNotEqual(
-                    packArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] as Array<Number>),
+                    packArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]),
                     [0xA0, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F]b
                 );
                 return true;
@@ -61,11 +61,11 @@ module MessagePack {
             (:test)
             function testArray16(logger as Logger) as Boolean {
                 Test.assertEqual(
-                    packArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] as Array<Number>),
+                    packArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]),
                     [0xDC, 0x00, 0x10, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F]b
                 );
                 Test.assertEqual(
-                    packArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20] as Array<Number>),
+                    packArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]),
                     [0xDC, 0x00, 0x15, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14]b
                 );
                 return true;
@@ -165,6 +165,7 @@ module MessagePack {
 
             (:test)
             function testMap16(logger as Logger) as Boolean {
+                // FIXME - this test will likely fail because Dictionary keys are not necessarily kept in order
                 Test.assertEqual(
                     packDictionary({
                         "a" => 0, "b" => 1, "c" => 2, "d" => 3,
@@ -262,7 +263,7 @@ module MessagePack {
             function testInt32(logger as Logger) as Boolean {
                 Test.assertEqual(packNumber(-32769), [0xD2, 0xFF, 0xFF, 0x7F, 0xFF]b);
                 Test.assertEqual(packNumber(-101916021), [0xD2, 0xF9, 0xEC, 0xE2, 0x8B]b);
-                Test.assertEqual(packNumber(-2147483648l), [0xD2, 0x80, 0x00, 0x00, 0x00]b);
+                Test.assertEqual(packNumber(-2147483648), [0xD2, 0x80, 0x00, 0x00, 0x00]b);
                 Test.assertNotEqual(packNumber(-2147483649l), [0xD2, 0x7F, 0xFF, 0xFF, 0xFF, 0xFF]b);
                 return true;
             }
@@ -356,6 +357,7 @@ module MessagePack {
 
             (:test)
             function testPack(logger as Logger) as Boolean {
+                Test.assertEqual(packArray([0,1,[10,11,12],3] as Array<MsgPackObject>), [0x94,0x00,0x01,0x93,0x0A,0x0B,0x0C,0x03]b);
                 Test.assertEqual(
                     pack( { "a" => 0, "b" => [1,2,3], "c" => true, "d" => null, "e" => "Blarg", "foxtrot" => { "x" => 4, "y" => 5 } } ),
                     [
@@ -383,7 +385,7 @@ module MessagePack {
             // @param  arrayA an array of MessagePack objects
             // @param  arrayB an array of MessagePack objects
             // @return boolean, true if they are "equal" or false otherwise
-            function equalArrays(arrayA as Array?, arrayB as Array?) as Boolean {
+            function equalArrays(arrayA as Array<MsgPackObject>?, arrayB as Array<MsgPackObject>?) as Boolean {
                 if (arrayA == null || arrayB == null) {
                     return false;
                 }
@@ -391,10 +393,10 @@ module MessagePack {
                     return false;
                 }
                 for (var i=0; i < arrayA.size(); i++) {
-                    if (arrayA[i] != arrayB[i] && !(arrayA[i] as MsgPackObject).equals(arrayB[i] as MsgPackObject)) {
+                    if ((arrayA[i] as Object) != (arrayB[i] as Object) && !(arrayA[i] as MsgPackObject).equals(arrayB[i] as MsgPackObject)) {
                         // check if the objects are arrays or dictionaries
                         if (arrayA[i] instanceof Array) {
-                            if (!equalArrays(arrayA[i] as Array, arrayB[i] as Array)) {
+                            if (!equalArrays(arrayA[i] as Array<MsgPackObject>, arrayB[i] as Array<MsgPackObject>)) {
                                 return false;
                             }
                         } else if (arrayA[i] instanceof Dictionary) {
@@ -431,10 +433,10 @@ module MessagePack {
                     if (dictA[key] == null && dictB[key] != null) {
                         return false;
                     }
-                    if (dictA[key] != dictB[key] && !(dictA[key] as Object).equals(dictB[key])) {
+                    if (dictA[key] != dictB[key] && !(dictA[key] as Object).equals(dictB[key] as Object)) {
                         // check if the objects are arrays or dictionaries
                         if (dictA[key] instanceof Array) {
-                            if (!equalArrays(dictA[key] as Array, dictB[key] as Array)) {
+                            if (!equalArrays(dictA[key] as Array<MsgPackObject>, dictB[key] as Array<MsgPackObject>)) {
                                 return false;
                             }
                         } else if (dictA[key] instanceof Dictionary) {

@@ -84,7 +84,9 @@ module MessagePack {
         }
     }
 
-    //! TODO - describe function here
+    // Generate a printable string (in a pretty manner) from a byte array.
+    //   @param  byteArray byte array of unspecified size
+    //   @return a string representation of the byte array
     (:debug)
     function prettyPrint(byteArray as ByteArray) as String {
         var printableStr = "";
