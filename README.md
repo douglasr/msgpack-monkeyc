@@ -15,6 +15,12 @@ This project cannot be used on it's own; it is designed to be included in existi
 ### Include the Barrel
 Download the barrel file (and associated debug.xml) and include it in your project. See [Shareable Libraries](https://developer.garmin.com/connect-iq/core-topics/shareable-libraries/) on the Connect IQ Developer site for more details.
 
+The code within the barrel is separated into serialization and deserialization modules and annotated accordingly. This allows you to only include the functionality that you require. As such, you must specify which annotations to include. If you need both, then add the following to the monkey.jungle within your project:
+
+```
+base.MessagePack.annotations = MessagePackSerialize; MessagePackDeserialize
+```
+
 ## Serializing objects
 Use ```MessagePack.Serialize.pack```:
 ```
