@@ -1,3 +1,7 @@
+<!--
+  MessagePack for Monkey C
+  Copyright (c) 2024-2025 Douglas Robertson (douglas@edgeoftheearth.com)
+-->
 <strings>
   <string id="exceptionElementTooLarge">arrays/maps larger than 65535 elements are not supported</string>
   <string id="exceptionExtraBytes">$1$ extra bytes after the deserialized object</string>

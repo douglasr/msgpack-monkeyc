@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #  MessagePack for Monkey C
-#  (c)2024 Douglas Robertson (douglas@edgeoftheearth.com)
+#  (c)2024-2025 Douglas Robertson (douglas@edgeoftheearth.com)
 #------------------------------------------------------------------------
 
 project.manifest = manifest.xml
